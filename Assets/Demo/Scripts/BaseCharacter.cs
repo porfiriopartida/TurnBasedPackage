@@ -7,7 +7,6 @@ public abstract class BaseCharacter : Character
 {
     public const string TURN_GAUGE = "TURN_GAUGE";
     public int speed = 1;
-    public bool IsEnemy;
 
     public const int MAX_TURN_GAUGE = 10;
     private Dictionary<string, string> attributes = new Dictionary<string, string>();
@@ -22,7 +21,7 @@ public abstract class BaseCharacter : Character
         }
 
         //ContextManager.GetInstance().NotifyEvent("TURN_GAUGE_GAINED", this);
-        Debug.Log((IsEnemy ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
+        Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
     }
     public override bool IsReady()
     {
@@ -43,38 +42,49 @@ public abstract class BaseCharacter : Character
     {
         Debug.Log(string.Format("{0} used {1}", getTag(), a));
         string action = "N/A";
+        bool executed = false;
         switch (a)
         {
             case 1:
                 action = "Basic Attack";
-                BasicAttack();
+                executed = BasicAttack();
                 break;
         }
 
         Debug.Log(string.Format("{0} used {1}", getTag(), action));
 
-        EndTurn();
+        if (executed) { 
+            EndTurn();
+        }
     }
     public int GetTurnGauge()
     {
-        string turnGaugeStr = GetAttribute(TURN_GAUGE);
+        string turnGaugeStr = GetAttribute(TURN_GAUGE, "0");
         return int.Parse(turnGaugeStr);
     }
     public void SetTurnGauge(int turnGauge)
     {
         SetAttribute(TURN_GAUGE, turnGauge.ToString());
+        updateTurnBar((float)turnGauge / MAX_TURN_GAUGE);
+    }
+    public void updateTurnBar(float val)
+    {
+
+        if (statusBar != null)
+        {
+            statusBar.updateTurnBar(val);
+        }
+
     }
 
-    public override string GetAttribute(string key)
+    public override string GetAttribute(string key) {
+        return this.GetAttribute(key, "");
+    }
+    public override string GetAttribute(string key, string defaultValue)
     {
         string outStr;
         bool hasVal = attributes.TryGetValue(key, out outStr);
-        return hasVal ? outStr : "";
-        //switch (key)
-        //{
-        //    case TURN_GAUGE:
-        //}
-        //throw new UnassignedReferenceException("Key not found: " + key);
+        return hasVal ? outStr : defaultValue;
     }
     public override void SetAttribute(string key, string val)
     {
@@ -86,21 +96,18 @@ public abstract class BaseCharacter : Character
         {
             attributes.Add(key, val);
         }
-        //switch (key)
-        //{
-        //    case TURN_GAUGE:
-        //        attributes.Add(key, val);
-        //        break;
-        //}
-        //throw new UnassignedReferenceException("Key not found: " + key);
     }
 
-    public virtual void BasicAttack()
+    public virtual bool BasicAttack()
     {
         ContextManager manager = ContextManager.GetInstance();
 
         Character target = isAlly ? manager.GetEnemyTarget() : manager.GetAllyTarget();
 
-        target.AddDamage(Atk);
+        if (target != null) { 
+            target.AddDamage(Atk);
+            return true;
+        }
+        return false;
     }
 }

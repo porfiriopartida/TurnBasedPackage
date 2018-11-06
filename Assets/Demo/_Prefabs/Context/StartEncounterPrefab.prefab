@@ -9,52 +9,46 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1911572546987508}
+  m_RootGameObject: {fileID: 1637466870310484}
   m_IsPrefabAsset: 1
---- !u!1 &1911572546987508
+--- !u!1 &1637466870310484
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4261245518214192}
-  - component: {fileID: 114352536807685888}
+  - component: {fileID: 4292656133716878}
+  - component: {fileID: 114081400725616992}
   m_Layer: 0
-  m_Name: GameLoop
-  m_TagString: GameController
+  m_Name: StartEncounterPrefab
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4261245518214192
+--- !u!4 &4292656133716878
 Transform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1911572546987508}
+  m_GameObject: {fileID: 1637466870310484}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6480536, y: -0.9605741, z: -0.028320312}
+  m_LocalPosition: {x: -0.04863426, y: 0.06901636, z: 0.1543925}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114352536807685888
+--- !u!114 &114081400725616992
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1911572546987508}
+  m_GameObject: {fileID: 1637466870310484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 795ca45b95dc29947879819fc326a51b, type: 3}
+  m_Script: {fileID: 11500000, guid: 16d817134378e974a95995a61e4f1e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Allies: []
-  Enemies: []
-  charactersPool: {fileID: 0}
-  _characterUIBarPrefab: {fileID: 1667091948338052, guid: b5cf7da79224dcd46bd4871aeb45e63a,
-    type: 2}
-  OnReadyEvents:
-  - {fileID: 114081400725616992, guid: 09f67ad21e801e04b86dcd7d987970f9, type: 2}
+  eventName: ENCOUNTER_STARTED

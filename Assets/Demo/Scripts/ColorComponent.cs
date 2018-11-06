@@ -4,6 +4,8 @@ namespace TurnBasedPackage
 {
     public class ColorComponent : MonoBehaviour
     {
+        [Range(0, 1)]
+        public float startingPercent = 0;
         [SerializeField]
         public ColorThreshHold[] colorThreshHoldList;
         private SpriteRenderer SpriteRenderer;
@@ -12,9 +14,11 @@ namespace TurnBasedPackage
         {
             SpriteRenderer = GetComponent<SpriteRenderer>();
             originalSize = transform.localScale;
+            UpdateValue(startingPercent);
         }
         public void UpdateValue(float percentValue)
         {
+            startingPercent = percentValue;
             foreach (ColorThreshHold colorThreshHold in colorThreshHoldList)
             {
                 if (percentValue >= colorThreshHold.threshhold/100f)

@@ -42,7 +42,7 @@ public class CatController : BaseCharacter
     {
         this.speed = baseSpeed;
 
-        List<Character> allies = IsEnemy ? ContextManager.GetInstance().GetEnemyCharacters() : ContextManager.GetInstance().GetAllyCharacters();
+        List<Character> allies = !isAlly ? ContextManager.GetInstance().GetEnemyCharacters() : ContextManager.GetInstance().GetAllyCharacters();
 
         //Debug.Log(string.Format("CAT_Unique. Allies found: {0}", allies.Count));
         foreach (Character ally in allies)

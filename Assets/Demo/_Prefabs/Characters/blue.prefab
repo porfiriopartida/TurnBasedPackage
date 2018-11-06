@@ -82,9 +82,8 @@ MonoBehaviour:
   CurrentHealth: 0
   Atk: 2
   IsAlive: 1
-  isAlly: 1
+  isAlly: 0
   speed: 1
-  IsEnemy: 0
 --- !u!212 &212395872209778552
 SpriteRenderer:
   m_ObjectHideFlags: 1

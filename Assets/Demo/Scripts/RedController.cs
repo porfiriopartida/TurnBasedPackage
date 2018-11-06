@@ -16,7 +16,7 @@ public class RedController : BaseCharacter
         }
         if (newTurnCharacter != null)
         {
-            Debug.Log(newTurnCharacter.getTag() + " turn started.");
+            Debug.Log(newTurnCharacter.getTag() + " turn started. {" +( newTurnCharacter.isAlly ? "ally":"enemy" )+  "}");
             if ("blue".Equals(newTurnCharacter.getTag())) {
                 Debug.Log("RED_PASSIVE_ACTIVATED");
             }

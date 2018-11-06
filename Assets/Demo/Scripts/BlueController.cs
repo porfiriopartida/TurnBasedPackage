@@ -8,17 +8,17 @@ public class BlueController : BaseCharacter
 {
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         this.speed = 2;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
 
     void ENCOUNTER_STARTED(ContextManager context) {
-        List< Character> allies = context.GetAllyCharacters();
+        List<Character> allies = context.GetAllyCharacters();
         int bonus = 0;
         foreach (Character ally in allies) {
             if ("blue".Equals(ally.getTag())) {
@@ -36,11 +36,18 @@ public class BlueController : BaseCharacter
         return "blue";
     }
 
-    public override void BasicAttack()
+    public override bool BasicAttack()
     {
         ContextManager manager = ContextManager.GetInstance();
 
-        manager.GetEnemyTarget().AddDamage(Atk);
-        manager.GetAllyTarget().AddHealth(1);
+        Character enemy = manager.GetEnemyTarget();
+        Character ally = manager.GetAllyTarget();
+        if (enemy == null || ally == null)
+        {
+            return false;
+        }
+        enemy.AddDamage(Atk);
+        ally.AddHealth(1);
+        return true;
     }
 }

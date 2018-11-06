@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main.unity
+    path: Assets/Demo/Scenes/Main.unity
     guid: d8a9820e46e734641a3b7b2f515c1b27
+  - enabled: 1
+    path: Assets/Demo/Scenes/DarkSideScene.unity
+    guid: da34a4d46b78a254f9560ef46c5efb66
+  - enabled: 1
+    path: Assets/Demo/Scenes/LightSideScene.unity
+    guid: 8ca1d273f669cab4a93f44ad7f0e2680
+  - enabled: 1
+    path: Assets/Demo/Scenes/BattleScene.unity
+    guid: 56a0f6192d7b5f441b96d6ed60e79449
   m_configObjects: {}

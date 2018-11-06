@@ -3,21 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace TurnBasedPackage
 {
-
     public class GameLoop : MonoBehaviour
     {
         public const string ZERO = "0";
         private ContextManager contextManager;
-        public List<Character> Allies;
-        public List<Character> Enemies;
+        public List<Character> Allies = new List<Character>();
+        public List<Character> Enemies = new List<Character>();
 
+        [System.NonSerialized]
         public Character EnemyTarget;
+        [System.NonSerialized]
         public Character AllyTarget;
-
+        [System.NonSerialized]
         public Character CharacterInTurn;
 
         //Prefabs
-        public GameObject _healthBarPrefab;
+        public CharactersPool charactersPool;
+        public GameObject _characterUIBarPrefab;
+
+        //Post Events
+        public List<EventNotifier> OnReadyEvents;
 
         // Use this for initialization
         void Start()
@@ -26,9 +31,77 @@ namespace TurnBasedPackage
 
             //Mind the order of execution.
             contextManager.AddObserver(gameObject);
-            contextManager.ENCOUNTER_STARTED(Allies, Enemies);
+
+            charactersPool.InitMap();
+
+            PrepareEnemies();
+
+            PrepareAllies();
+
+            PrepareBattle();
+
+            DoneLoading();
+        }
+
+        private void DoneLoading() {
+            foreach (EventNotifier en in OnReadyEvents) {
+                Instantiate(en, transform);
+            }
+        }
+
+        private void PrepareAllies()
+        {
+            string[] allies = new string[] { "blue", "cat", "blue" };
+
+            Transform parent = GameObject.Find("allies").transform;
+            CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
+            
+            for(int i = 0; i < allies.Length; i++)
+            {
+                GameObject newInstance = Instantiate(charactersPool.get(allies[i]), parent, false);
+                newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
+                Allies.Add(newInstance.GetComponent<Character>());
+                Character newCharacter = newInstance.GetComponent<Character>();
+                newCharacter.isAlly = true;
+                Allies.Add(newCharacter);
+
+                //Setup hp and energy bars.
+                GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
+                newUIInstance.name = Character.STATUS_BAR_NAME;
+                newCharacter.HierarchyUpdated();
+            }
+        }
+
+        private void PrepareEnemies()
+        {
+            string[] enemies = new string[] { "cat", "red", "cat" };
+            Transform parent = GameObject.Find("enemies").transform;
+            CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
+
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                GameObject newInstance = Instantiate(charactersPool.get(enemies[i]), parent, false);
+                newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
+                Character newCharacter = newInstance.GetComponent<Character>();
+                newCharacter.isAlly = false;
+                Enemies.Add(newCharacter);
+
+                //Setup hp and energy bars.
+                GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
+                newUIInstance.name = Character.STATUS_BAR_NAME;
+                newCharacter.HierarchyUpdated();
+            }
+        }
+
+        private void PrepareBattle() {
+
+            string str = ContextManager.GetContextAttribute("SceneContext");
+            Debug.Log(str + "IS STARTING.. ");
+
+            contextManager.SET_CHARACTERS(Allies, Enemies);
             contextManager.SetAttributes(BaseCharacter.TURN_GAUGE, ZERO);
         }
+
 
         public void _GainTurnGauge()
         {
@@ -37,7 +110,7 @@ namespace TurnBasedPackage
 
         public void NextTurn()
         {
-            while (!contextManager.HasCharacterInTurn())
+            while (!contextManager.HasCharacterInTurn() && contextManager.IsEnabled)
             {
                 _GainTurnGauge();
             }
@@ -67,11 +140,12 @@ namespace TurnBasedPackage
             CharacterInTurn = c;
         }
 
-        private void endTurn() {
+        protected void endTurn() {
             contextManager.TURN_ENDED();
         }
 
-        public void TURN_ENDED(Character character) {
+        public void TURN_ENDED(BaseCharacter character) {
+            character.SetTurnGauge(0);
             character.SetAttribute(BaseCharacter.TURN_GAUGE, ZERO);
             List<Character> characters = contextManager.GetAllCharacters();
             foreach (Character c in characters) {
@@ -100,14 +174,8 @@ namespace TurnBasedPackage
         void ENCOUNTER_STARTED(ContextManager context)
         {
             List<Character> characters = context.GetAllCharacters();
-            foreach (Character character in characters)
-            {
-                //Setup hp and energy bars.
-                GameObject newInstance = Instantiate(_healthBarPrefab, character.transform);
-                newInstance.name = Character.HP_BAR_NAME;
 
-                character.HierarchyUpdated();
-            }
+            NextTurn();
         }
         void ENEMY_TARGET_CHANGED(Character character)
         {

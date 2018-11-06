@@ -78,13 +78,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ece6644a7d87448a1f8406a6a97fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 10
+  MaxHealth: 15
   CurrentHealth: 0
-  Atk: 1
+  Atk: 2
   IsAlive: 1
-  isAlly: 1
+  isAlly: 0
   speed: 1
-  IsEnemy: 1
 --- !u!212 &212919581057728918
 SpriteRenderer:
   m_ObjectHideFlags: 1
