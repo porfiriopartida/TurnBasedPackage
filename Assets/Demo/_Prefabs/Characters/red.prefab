@@ -84,6 +84,7 @@ MonoBehaviour:
   IsAlive: 1
   isAlly: 0
   speed: 1
+  thumbnail: {fileID: 21300000, guid: bf824155c7411464d94878c4ee82f58c, type: 3}
 --- !u!212 &212672576661783724
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -10,6 +10,7 @@ public abstract class BaseCharacter : Character
 
     public const int MAX_TURN_GAUGE = 10;
     private Dictionary<string, string> attributes = new Dictionary<string, string>();
+    public Sprite thumbnail;
 
     public void GainTurnGauge()
     {
