@@ -37,9 +37,16 @@ public class CatController : BaseCharacter
         CAT_Unique();
     }
 
+
+    public static bool DISABLED = true;
     //SKILLS
     public void CAT_Unique()
     {
+        if(DISABLED)
+        {
+            return;
+        }
+        //TODO: Move to another class.
         this.speed = baseSpeed;
 
         List<Character> allies = !isAlly ? ContextManager.GetInstance().GetEnemyCharacters() : ContextManager.GetInstance().GetAllyCharacters();
@@ -62,16 +69,22 @@ public class CatController : BaseCharacter
 
     public override void TakeAction(int a)
     {
+        bool actionResult = false;
         string action = "N/A";
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("BasicAttack");
         switch (a) {
             case 1:
                 action = "Basic Attack";
-                BasicAttack();
+                actionResult = BasicAttack();
                 break;
         }
 
         Debug.Log(string.Format("{0} used {1}", getTag(), action));
-
-        EndTurn();
+        /*
+        if(actionResult){
+            EndTurn();
+        }
+        */
     }
 }

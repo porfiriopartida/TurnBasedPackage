@@ -9,7 +9,7 @@ public class BlueController : BaseCharacter
 
     // Use this for initialization
     void Start() {
-        this.speed = 2;
+        //this.speed = 2;
     }
 
     // Update is called once per frame
@@ -25,9 +25,9 @@ public class BlueController : BaseCharacter
                 bonus++;
             }
         }
-        Debug.Log(bonus + " blue characters have been found.");
+        //Debug.Log(bonus + " blue characters have been found.");
 
-        int v = (int)(1 + (0.5 * bonus));
+        int v = (int)(1 + (0.1 * bonus));
         this.CurrentHealth = this.MaxHealth = this.MaxHealth *= v;
     }
 
@@ -38,6 +38,7 @@ public class BlueController : BaseCharacter
 
     public override bool BasicAttack()
     {
+        playAttackSfx();
         ContextManager manager = ContextManager.GetInstance();
 
         Character enemy = manager.GetEnemyTarget();
@@ -49,5 +50,10 @@ public class BlueController : BaseCharacter
         enemy.AddDamage(Atk);
         ally.AddHealth(1);
         return true;
+    }
+
+    /* SFX Section */
+    public void playAttackSfx(){
+        playSFX(attack);
     }
 }

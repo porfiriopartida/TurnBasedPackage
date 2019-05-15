@@ -5,6 +5,7 @@ using TurnBasedPackage;
 
 public class RedController : BaseCharacter
 {
+    /*
     void TURN_STARTED(Character newCharacterInTurn)
     {
         ContextManager contextManager = ContextManager.GetInstance();
@@ -22,7 +23,7 @@ public class RedController : BaseCharacter
             }
         }
     }
-
+    */
     public override string getTag()
     {
         return "red";

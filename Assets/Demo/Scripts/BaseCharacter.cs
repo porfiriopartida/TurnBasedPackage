@@ -5,6 +5,7 @@ using TurnBasedPackage;
 
 public abstract class BaseCharacter : Character
 {
+    public AudioClip attack;
     public const string TURN_GAUGE = "TURN_GAUGE";
     public int speed = 1;
 
@@ -22,11 +23,11 @@ public abstract class BaseCharacter : Character
         }
 
         //ContextManager.GetInstance().NotifyEvent("TURN_GAUGE_GAINED", this);
-        Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
+        //Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
     }
     public override bool IsReady()
     {
-        return GetTurnGauge() >= MAX_TURN_GAUGE;
+        return GetTurnGauge() >= MAX_TURN_GAUGE && IsAlive;
     }
 
     public void TURN_GAUGE_GAINED(Character c) {
@@ -41,7 +42,7 @@ public abstract class BaseCharacter : Character
 
     public override void TakeAction(int a)
     {
-        Debug.Log(string.Format("{0} used {1}", getTag(), a));
+        //Debug.Log(string.Format("{0} used {1}", getTag(), a));
         string action = "N/A";
         bool executed = false;
         switch (a)
@@ -52,7 +53,7 @@ public abstract class BaseCharacter : Character
                 break;
         }
 
-        Debug.Log(string.Format("{0} used {1}", getTag(), action));
+        Debug.Log(string.Format("{0} used {1} - {2}", getTag(), action, executed));
 
         if (executed) { 
             EndTurn();
@@ -98,17 +99,19 @@ public abstract class BaseCharacter : Character
             attributes.Add(key, val);
         }
     }
-
+    
     public virtual bool BasicAttack()
     {
         ContextManager manager = ContextManager.GetInstance();
 
         Character target = isAlly ? manager.GetEnemyTarget() : manager.GetAllyTarget();
 
-        if (target != null) { 
+        if (target != null && target.IsAlive) {
+            playSFX(attack);
             target.AddDamage(Atk);
             return true;
         }
+
         return false;
     }
 }
