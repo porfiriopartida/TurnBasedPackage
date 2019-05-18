@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 114686465419025678}
   - component: {fileID: 61700338771697070}
   - component: {fileID: 4505774286231892133}
+  - component: {fileID: 1680000549970203364}
   m_Layer: 0
   m_Name: red
   m_TagString: Untagged
@@ -96,11 +97,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 10
   CurrentHealth: 0
-  Atk: 1
+  Atk: 2
   IsAlive: 1
   isAlly: 0
   attack: {fileID: 8300000, guid: 6bb63680a7eb0a847a1642afae9a0502, type: 3}
-  speed: 2
+  speed: 54
   thumbnail: {fileID: 21300000, guid: bf824155c7411464d94878c4ee82f58c, type: 3}
 --- !u!61 &61700338771697070
 BoxCollider2D:
@@ -224,3 +225,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &1680000549970203364
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941825151979370}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 39db5199b1bca7843803624e3d46865f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

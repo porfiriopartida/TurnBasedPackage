@@ -14,7 +14,7 @@ public class CatController : BaseCharacter
     // Use this for initialization
     void Start()
     {
-        this.speed = 1;
+        this.baseSpeed = speed;
     }
 
     // Update is called once per frame
@@ -71,8 +71,9 @@ public class CatController : BaseCharacter
     {
         bool actionResult = false;
         string action = "N/A";
-        Animator animator = GetComponent<Animator>();
-        animator.SetTrigger("BasicAttack");
+        // Animator animator = GetComponent<Animator>();
+        // animator.SetTrigger("BasicAttack");
+        TriggerAnimation("BasicAttack"); //TODO: Make a constant?
         switch (a) {
             case 1:
                 action = "Basic Attack";

@@ -9,7 +9,7 @@ public abstract class BaseCharacter : Character
     public const string TURN_GAUGE = "TURN_GAUGE";
     public int speed = 1;
 
-    public const int MAX_TURN_GAUGE = 10;
+    public const int MAX_TURN_GAUGE = 1000;
     private Dictionary<string, string> attributes = new Dictionary<string, string>();
     public Sprite thumbnail;
 
@@ -55,9 +55,9 @@ public abstract class BaseCharacter : Character
 
         Debug.Log(string.Format("{0} used {1} - {2}", getTag(), action, executed));
 
-        if (executed) { 
-            EndTurn();
-        }
+        //if (executed) { 
+            //EndTurn();
+        //}
     }
     public int GetTurnGauge()
     {
@@ -107,11 +107,16 @@ public abstract class BaseCharacter : Character
         Character target = isAlly ? manager.GetEnemyTarget() : manager.GetAllyTarget();
 
         if (target != null && target.IsAlive) {
+            TriggerAnimation("BasicAttack"); //TODO: Make a constant?
             playSFX(attack);
             target.AddDamage(Atk);
             return true;
         }
 
         return false;
+    }
+    public void TriggerAnimation(string anim){
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger(anim);
     }
 }

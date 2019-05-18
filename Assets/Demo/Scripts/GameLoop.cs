@@ -158,14 +158,18 @@ namespace TurnBasedPackage
             else {
                 arrow.SetActive(false);
                 setNextTarget();
-                TakeAction(1);
-                Debug.Log("TURN_STARTED AI Move : " + c.name);
+                if(contextManager.GetAllyTarget() != null){
+                    TakeAction(1);
+                    Debug.Log("TURN_STARTED AI Move : " + c.name);
+                }
             }
         }
 
         public void setNextTarget(){
             Character randomAlly = contextManager.getRandomAlive(contextManager.GetAllyCharacters());
-            contextManager.SetAllyTarget(randomAlly);
+            if(randomAlly != null){
+                contextManager.SetAllyTarget(randomAlly);
+            }
         }
 
         protected void endTurn() {
