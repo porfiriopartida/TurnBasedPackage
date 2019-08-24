@@ -18,12 +18,12 @@ public abstract class BaseCharacter : Character
         int turnGauge = GetTurnGauge();
         turnGauge += getSpeed();
         SetTurnGauge(turnGauge);
+        //ContextManager.GetInstance().NotifyEvent("TURN_GAUGE_GAINED", this);
+        Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
+
         if (IsReady()) {
             ContextManager.GetInstance().SetCharacterInTurn(this);
         }
-
-        //ContextManager.GetInstance().NotifyEvent("TURN_GAUGE_GAINED", this);
-        Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
     }
     public override bool IsReady()
     {
@@ -58,7 +58,8 @@ public abstract class BaseCharacter : Character
         //if (executed) { 
             //EndTurn();
         //}
-        EndTurn();
+        // EndTurn();
+        // This is run after the animation is executed.
     }
     public int GetTurnGauge()
     {

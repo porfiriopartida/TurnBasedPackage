@@ -17,11 +17,7 @@ namespace TurnBasedPackage
 
         public void TURN_STARTED(Character c)
         {
-            if (c == null)
-            {
-                return;
-            }
-            if (c.isAlly)
+            if (c == null || c.isAlly)
             {
                 return;
             }

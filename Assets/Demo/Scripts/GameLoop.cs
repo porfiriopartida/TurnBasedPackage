@@ -181,16 +181,14 @@ namespace TurnBasedPackage
             c.TakeAction(a);
         }
 
+        //Listen to Allies turn started, enemies will be handled in AIController.
         public void TURN_STARTED(Character c)
         {
-            if (c == null)
+            if (c == null || !c.isAlly)
             {
                 return;
             }
-            if (c.isAlly)
-            {
-                return;
-            }
+
             //System.Threading.Thread.Sleep(10);
 
             CharacterInTurn = c;
@@ -230,9 +228,10 @@ namespace TurnBasedPackage
                 if (c.IsReady()) {
                     //FIFO
                     contextManager.SetCharacterInTurn(c);
-                    break;
+                    return;
                 }
             }
+            //Only call next in turn if no one was ready before.
             NextTurn();
         }
 

@@ -87,6 +87,7 @@ public class CatController : BaseCharacter
             EndTurn();
         }
         */
-        EndTurn();
+        // EndTurn getscalled after theanimation.
+        // EndTurn();
     }
 }
