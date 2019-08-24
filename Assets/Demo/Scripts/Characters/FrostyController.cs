@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FrostyController : MonoBehaviour
+public class FrostyController : BaseCharacter
 {
-    // Start is called before the first frame update
-    void Start()
+    public override string getTag()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return "frosty";
     }
 }

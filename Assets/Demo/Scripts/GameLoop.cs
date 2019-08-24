@@ -30,6 +30,23 @@ namespace TurnBasedPackage
         // Use this for initialization
         void Start()
         {
+            /** 
+            * Register as observer to ContextManager
+            * * List.add
+            * Prepare Allies
+            * Prepare Enemies
+            * Send SET_CHARACTERS event to ContextManager
+            * * Set Enemies, Set Allies
+            * Notify Event ENCOUNTER_STARTED (sent to all listeners/allies/ through ContextManager)
+            * * Notify Characters
+            * * * Send message for each observer inside observerslist
+            * * Notify Observers (like this GameLoop instance)
+            * * Loop
+            * * * Send message for each observer inside observerslist
+            * 
+            * * Context Manager uses the SendMessage unity method, which invokes the given method if it exists such as  "ENCOUNTER_STARTED()" for Characters that may
+            * * do something special for such event.
+            */
             contextManager = ContextManager.GetInstance();
 
             //Mind the order of execution.
@@ -37,77 +54,97 @@ namespace TurnBasedPackage
 
             charactersPool.InitMap();
 
-            PrepareEnemies();
-
+            //Building allies and enemies from the characters pool.
             PrepareAllies();
+
+            PrepareEnemies();
 
             PrepareBattle();
 
+            //Starts the Event Notifier.
             DoneLoading();
 
             presetTargets();
         }
+        /* 
+        <summary>
+        Set the Target contexts, Enemies will focus the Ally target and Allies will focus the enemy target.
+        </summary> 
+        */
         private void presetTargets(){
             contextManager.SetEnemyTarget(contextManager.GetEnemyCharacters()[0]);
             contextManager.SetAllyTarget(contextManager.GetAllyCharacters()[0]);
         }
+        /* 
+        <summary>
+        Sends to the ContextManager the EventName and then removes them from the Unity scene if Auto Remove is checked.
+        This sends the ENCOUNTER_STARTED once after all the pre setup is done.
+        </summary> 
+        */
         private void DoneLoading() {
             foreach (EventNotifier en in OnReadyEvents) {
                 Instantiate(en, transform);
             }
         }
 
-        private void PrepareAllies()
-        {
-            string[] allies = new string[] { "blue", "cat", "blue" };
-
+        private void PrepareAllies(){
             Transform parent = GameObject.Find("allies").transform;
+            string[] enemies = new string[] { "blue", "frosty", "blue" };
+            PrepareCharacters(parent, Allies, enemies, true);
+        }
+        private void PrepareEnemies(){
+            Transform parent = GameObject.Find("enemies").transform;
+            string[] enemies = new string[] { "cat", "red", "cat" };
+            PrepareCharacters(parent, Enemies, enemies, false);
+        }
+        /* 
+            <summary>
+            Given an array of string names, the context sets allies if they exist in the CharacterPool instance as prefabs.
+            Creates a game object based on the previous lookup.
+            Created characters are then marked as isAlly = true and added to the Allies List
+            The UI status bars are also added here.
+            </summary>
+            <param name="parent">Transform to hold the new game object.</param>
+            <param name="parentList">List<Character> the list for reference of type of character (allies or enemies)</param>
+            <param name="characters">string[] Array of character names to lookup in the prefabs characters pool</param>
+            <param name="isAlly">Boolean to set the character as Ally (true) or Enemey (false)</param>
+        */
+        private void PrepareCharacters(Transform parent, List<Character> parentList, string[] characters, Boolean isAlly)
+        {
             CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
             
-            for(int i = 0; i < allies.Length; i++)
+            for(int i = 0; i < characters.Length; i++)
             {
-                GameObject newInstance = Instantiate(charactersPool.get(allies[i]), parent, false);
+                //TODO: What if the character does not exist in the pool?
+                String characterKey = characters[i];
+                GameObject characterReference = charactersPool.get(characterKey);
+                //Character newCharacter = characterReference.GetComponent<Character>();
+                //newCharacter.isAlly = false;//this is not being saved?
+                GameObject newInstance = Instantiate(characterReference, parent, false);
                 newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
-                //Allies.Add(newInstance.GetComponent<Character>());
                 Character newCharacter = newInstance.GetComponent<Character>();
-                newCharacter.isAlly = true;
-                Allies.Add(newCharacter);
-
+                newCharacter.isAlly = false;//this is not being saved?
+                newCharacter.CurrentHealth = newCharacter.MaxHealth;
+                parentList.Add(newCharacter);
                 //Setup hp and energy bars.
                 GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
                 newUIInstance.name = Character.STATUS_BAR_NAME;
-                newCharacter.HierarchyUpdated();
+                //newCharacter.HierarchyUpdated();
             }
         }
 
-        private void PrepareEnemies()
-        {
-            string[] enemies = new string[] { "cat", "red", "cat" };
-            Transform parent = GameObject.Find("enemies").transform;
-            CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
-
-            for (int i = 0; i < enemies.Length; i++)
-            {
-                GameObject newInstance = Instantiate(charactersPool.get(enemies[i]), parent, false);
-                newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
-                Character newCharacter = newInstance.GetComponent<Character>();
-                newCharacter.isAlly = false;
-                Enemies.Add(newCharacter);
-
-                //Setup hp and energy bars.
-                GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
-                newUIInstance.name = Character.STATUS_BAR_NAME;
-                newCharacter.HierarchyUpdated();
-            }
-        }
-
+        /* 
+            <summary>
+            Submits the SET_CHARACTERS event with Allies and Enemies in context
+            </summary>
+        */
         private void PrepareBattle() {
 
             string str = ContextManager.GetContextAttribute("SceneContext");
             Debug.Log(str + "IS STARTING.. ");
 
             contextManager.SET_CHARACTERS(Allies, Enemies);
-            contextManager.SetAttributes(BaseCharacter.TURN_GAUGE, ZERO);
+            contextManager.SetAttributes(BaseCharacter.TURN_GAUGE, ZERO); //TODO: Add to doc. This sets the turn meter to 0.
         }
 
 
@@ -118,7 +155,7 @@ namespace TurnBasedPackage
 
         public void NextTurn()
         {
-            while (!contextManager.HasCharacterInTurn() && contextManager.IsEnabled)
+            while (contextManager.CanTriggerNextTurn())
             {
                 _GainTurnGauge();
             }
@@ -146,23 +183,32 @@ namespace TurnBasedPackage
 
         public void TURN_STARTED(Character c)
         {
-            System.Threading.Thread.Sleep(10);
+            if (c == null)
+            {
+                return;
+            }
+            if (c.isAlly)
+            {
+                return;
+            }
+            //System.Threading.Thread.Sleep(10);
 
             CharacterInTurn = c;
+            Debug.Log("TURN_STARTED : " + c.name + ". IsAlly: " + c.isAlly);
             if(c != null && c.isAlly){
                 arrow.SetActive(false);
                 arrow.GetComponent<TargetLookup>().movetoTarget(c.gameObject);
                 arrow.SetActive(true);
-                Debug.Log("TURN_STARTED : " + c.name);
             }
+            /* 
             else {
                 arrow.SetActive(false);
                 setNextTarget();
                 if(contextManager.GetAllyTarget() != null){
-                    TakeAction(1);
                     Debug.Log("TURN_STARTED AI Move : " + c.name);
+                    TakeAction(1);
                 }
-            }
+            }*/
         }
 
         public void setNextTarget(){
@@ -232,6 +278,7 @@ namespace TurnBasedPackage
             if(randomTarget == null){
                 //All defeated
                 Debug.Log( isAlly ? "DEFEAT!" : "VICTORY");
+                this.gameObject.SetActive(false); //TODO: This hack removes the infinite loop, fix this.
                 return;
             }
             //Reset target for either side.

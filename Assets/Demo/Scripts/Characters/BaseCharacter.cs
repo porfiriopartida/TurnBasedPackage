@@ -23,7 +23,7 @@ public abstract class BaseCharacter : Character
         }
 
         //ContextManager.GetInstance().NotifyEvent("TURN_GAUGE_GAINED", this);
-        //Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
+        Debug.Log((!isAlly ? "Enemy " : "Ally") + "[" + getTag() + "] gained turn gauge with speed [" + speed + "] ... " + GetTurnGauge());
     }
     public override bool IsReady()
     {
@@ -53,11 +53,12 @@ public abstract class BaseCharacter : Character
                 break;
         }
 
-        Debug.Log(string.Format("{0} used {1} - {2}", getTag(), action, executed));
+//        Debug.Log(string.Format("{0} used {1} - {2}", getTag(), action, executed));
 
         //if (executed) { 
             //EndTurn();
         //}
+        EndTurn();
     }
     public int GetTurnGauge()
     {
@@ -110,6 +111,7 @@ public abstract class BaseCharacter : Character
             TriggerAnimation("BasicAttack"); //TODO: Make a constant?
             playSFX(attack);
             target.AddDamage(Atk);
+            Debug.Log(getTag() + " has attacked " + target.getTag());
             return true;
         }
 

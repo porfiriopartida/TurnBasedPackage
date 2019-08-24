@@ -81,11 +81,12 @@ public class CatController : BaseCharacter
                 break;
         }
 
-        Debug.Log(string.Format("{0} used {1}", getTag(), action));
+        //Debug.Log(string.Format("{0} used {1}", getTag(), action));
         /*
         if(actionResult){
             EndTurn();
         }
         */
+        EndTurn();
     }
 }
