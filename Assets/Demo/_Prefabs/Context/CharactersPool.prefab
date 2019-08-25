@@ -51,5 +51,5 @@ MonoBehaviour:
   - key: cat
     prefab: {fileID: 1646806190533718, guid: a24089da164656744af9d318bde81846, type: 3}
   - key: frosty
-    prefab: {fileID: 4094374733985290877, guid: 25ffa4a49198a444a90f1abd478749a2,
+    prefab: {fileID: 8062568515554199156, guid: 06e7ee53ae7e24442901612f8f5f02a9,
       type: 3}

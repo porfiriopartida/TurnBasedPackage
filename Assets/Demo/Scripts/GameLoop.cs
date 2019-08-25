@@ -51,6 +51,7 @@ namespace TurnBasedPackage
 
             //Mind the order of execution.
             contextManager.AddObserver(gameObject);
+            contextManager.FlipEnemies(true);
 
             charactersPool.InitMap();
 
@@ -90,12 +91,12 @@ namespace TurnBasedPackage
         private void PrepareAllies(){
             Transform parent = GameObject.Find("allies").transform;
             string[] enemies = new string[] { "blue", "frosty", "blue" };
-            PrepareCharacters(parent, Allies, enemies, true);
+            PrepareCharacters(parent, Allies, enemies);
         }
         private void PrepareEnemies(){
             Transform parent = GameObject.Find("enemies").transform;
             string[] enemies = new string[] { "cat", "red", "cat" };
-            PrepareCharacters(parent, Enemies, enemies, false);
+            PrepareCharacters(parent, Enemies, enemies);
         }
         /* 
             <summary>
@@ -109,7 +110,7 @@ namespace TurnBasedPackage
             <param name="characters">string[] Array of character names to lookup in the prefabs characters pool</param>
             <param name="isAlly">Boolean to set the character as Ally (true) or Enemey (false)</param>
         */
-        private void PrepareCharacters(Transform parent, List<Character> parentList, string[] characters, Boolean isAlly)
+        private void PrepareCharacters(Transform parent, List<Character> parentList, string[] characters)
         {
             CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
             
@@ -123,13 +124,13 @@ namespace TurnBasedPackage
                 GameObject newInstance = Instantiate(characterReference, parent, false);
                 newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
                 Character newCharacter = newInstance.GetComponent<Character>();
-                newCharacter.isAlly = false;//this is not being saved?
                 newCharacter.CurrentHealth = newCharacter.MaxHealth;
                 parentList.Add(newCharacter);
                 //Setup hp and energy bars.
+                newInstance.transform.Find("STATUS_BAR");
                 GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
                 newUIInstance.name = Character.STATUS_BAR_NAME;
-                //newCharacter.HierarchyUpdated();
+                newCharacter.HierarchyUpdated();
             }
         }
 

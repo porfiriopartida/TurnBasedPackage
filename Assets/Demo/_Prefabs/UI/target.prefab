@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  offsetX: 0.15
+  offsetX: -0.15
   offsetY: -0.35
 --- !u!95 &1632015171
 Animator:

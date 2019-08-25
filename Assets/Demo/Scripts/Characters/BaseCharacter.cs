@@ -119,7 +119,7 @@ public abstract class BaseCharacter : Character
         return false;
     }
     public void TriggerAnimation(string anim){
-        Animator animator = GetComponent<Animator>();
+        Animator animator = GetComponentInChildren<Animator>();
         animator.SetTrigger(anim);
     }
 }
