@@ -6,7 +6,21 @@ using TurnBasedPackage;
 public class BasicMovementController : MonoBehaviour
 {
     void Start(){
-        //TODO: Check context position so we are rendered where we left.
+        object getPosition, pIsVictory;
+
+        if(TransitionWithParameters.parameters.TryGetValue("currentPosition", out getPosition)){
+                //If known, use the previous position.
+            transform.position = (Vector3) getPosition;
+        }
+        
+        if(TransitionWithParameters.parameters.TryGetValue("isVictory", out pIsVictory)){
+            bool isVictory = (bool)pIsVictory;
+            //If Coming from isVictory = false, move to the heal center.
+            if(!isVictory){
+                Vector3 healPosition = GameObject.Find("heal").transform.position;
+                transform.position = healPosition;
+            }
+        } 
     }
     public float speed = 1f;
     private bool inGrass = false;
@@ -39,7 +53,7 @@ public class BasicMovementController : MonoBehaviour
     public void registerWalking(){
         if(this.inGrass){
             grassWalking++;
-            if(grassWalking < 10) {
+            if(grassWalking < 50) {
                 return;
             }
             Debug.Log(this.name + " is walking in grass.");
@@ -68,6 +82,7 @@ public class BasicMovementController : MonoBehaviour
 
             }
             context.Add("enemies", enemiesArray); //This context must be string to obj maybe?
+            context.Add("currentPosition", transform.position); //This context must be string to obj maybe?
 
             TransitionWithParameters.Transition("BattleScene", context);
         } else {

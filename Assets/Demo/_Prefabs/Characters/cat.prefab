@@ -99,7 +99,7 @@ MonoBehaviour:
   MaxHealth: 5
   IsAlive: 1
   isAlly: 0
-  Atk: 1
+  Atk: 2
   attack: {fileID: 8300000, guid: c63670661a27b1d4588ffb407c9fa0ac, type: 3}
   speed: 100
   thumbnail: {fileID: 21300000, guid: bca858008a7b4e04a82de2284c224d30, type: 3}

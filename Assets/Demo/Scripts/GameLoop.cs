@@ -102,8 +102,19 @@ namespace TurnBasedPackage
 
         private void PrepareAllies(){
             Transform parent = GameObject.Find("allies").transform;
-            string[] enemies = new string[] { "blue", "frosty", "blue" };
-            PrepareCharacters(parent, Allies, enemies);
+            
+            Dictionary<string, object> previousContext = TransitionWithParameters.parameters;
+            object pPreviousStates = "NA";
+            State[] previousStates = null;
+            if(previousContext.TryGetValue("allies", out pPreviousStates)){
+                //passing the previous context of characters
+                previousStates = (State[]) pPreviousStates;
+                PrepareCharacters(parent, Allies, previousStates);
+            } else {
+                string[] alies = new string[] { "blue", "frosty", "blue" };
+                PrepareCharacters(parent, Allies, alies);
+            }
+
         }
         private void PrepareEnemies(string[] enemies){
             Transform parent = GameObject.Find("enemies").transform;
@@ -125,7 +136,6 @@ namespace TurnBasedPackage
         private void PrepareCharacters(Transform parent, List<Character> parentList, string[] characters)
         {
             CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
-            
             for(int i = 0; i < characters.Length; i++)
             {
                 //TODO: What if the character does not exist in the pool?
@@ -137,12 +147,46 @@ namespace TurnBasedPackage
                 newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
                 Character newCharacter = newInstance.GetComponent<Character>();
                 newCharacter.CurrentHealth = newCharacter.MaxHealth;
+                newCharacter.IsAlive = true;
                 parentList.Add(newCharacter);
+                
                 //Setup hp and energy bars.
                 newInstance.transform.Find("STATUS_BAR");
                 GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
                 newUIInstance.name = Character.STATUS_BAR_NAME;
                 newCharacter.HierarchyUpdated();
+            }
+        }
+        private void PrepareCharacters(Transform parent, List<Character> parentList, State[] previousState)
+        {
+            CoordinatesController coordinates = parent.GetComponent<CoordinatesController>();
+            for(int i = 0; i < previousState.Length; i++)
+            {
+                State state = previousState[i];
+                //TODO: What if the character does not exist in the pool?
+                String characterKey = state.Tag;
+                GameObject characterReference = charactersPool.get(characterKey);
+                //Character newCharacter = characterReference.GetComponent<Character>();
+                //newCharacter.isAlly = false;//this is not being saved?
+                GameObject newInstance = Instantiate(characterReference, parent, false);
+                newInstance.transform.localPosition = new Vector2(coordinates.points[i].x, coordinates.points[i].y);
+                Character newCharacter = newInstance.GetComponent<Character>();
+                //Just storing our current GameObjects is not possible, we will need to setup a "State" object instead.
+                // Just passing the GameObject/Controller will end up in MissingReferenceException: The object of type 'XXController' 
+                //Testing with CurrentHealths.
+                state.loadTo(newCharacter);
+
+                parentList.Add(newCharacter);
+                
+                if(state.IsAlive){
+                    //TODO: We still need the dead one reference.
+                    //Setup hp and energy bars.
+                    newInstance.transform.Find("STATUS_BAR");
+                    GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
+                    newUIInstance.name = Character.STATUS_BAR_NAME;
+                    newCharacter.HierarchyUpdated();
+                    continue;
+                }
             }
         }
 
@@ -289,10 +333,15 @@ namespace TurnBasedPackage
             Character randomTarget = manager.getRandomAlive(targetsList);
             if(randomTarget == null){
                 //All defeated
+                bool isVictory = !isAlly;
                 Debug.Log( isAlly ? "DEFEAT!" : "VICTORY");
-                this.gameObject.SetActive(false); //TODO: This hack removes the infinite loop, fix this.
+                //Stop all turn meter gauge gaining.
+                this.gameObject.SetActive(false); 
 
-                TransitionWithParameters.Transition(ppreviousSceneName, null);
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                parameters.Add("allies", buildAlliesState());
+                parameters.Add("isVictory", isVictory);
+                TransitionWithParameters.Transition(ppreviousSceneName, parameters);
                 return;
             }
             //Reset target for either side.
@@ -302,6 +351,13 @@ namespace TurnBasedPackage
             } else {
                 manager.SetEnemyTarget(randomTarget);
             }
+        }
+        private object buildAlliesState(){
+            State[] states = new State[Allies.Count];
+            for(int i=0;i<states.Length; i++){
+                states[i] = State.buildFromCharacter(Allies[i]);
+            }
+            return states;
         }
     }
 }

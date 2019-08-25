@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentHealth: 0
-  MaxHealth: 20
+  MaxHealth: 40
   IsAlive: 1
   isAlly: 0
   Atk: 1

@@ -96,10 +96,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentHealth: 0
-  MaxHealth: 1
+  MaxHealth: 7
   IsAlive: 1
   isAlly: 0
-  Atk: 2
+  Atk: 3
   attack: {fileID: 8300000, guid: 6bb63680a7eb0a847a1642afae9a0502, type: 3}
   speed: 54
   thumbnail: {fileID: 21300000, guid: bf824155c7411464d94878c4ee82f58c, type: 3}
