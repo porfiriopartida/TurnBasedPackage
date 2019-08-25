@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Demo/Scenes/PorqueMon.unity
+    guid: 7337b89f4e0072b48a572306343a9601
+  - enabled: 1
     path: Assets/Demo/Scenes/BattleScene.unity
     guid: 56a0f6192d7b5f441b96d6ed60e79449
   m_configObjects: {}

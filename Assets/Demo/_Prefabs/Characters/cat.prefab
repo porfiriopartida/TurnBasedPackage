@@ -95,11 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ece6644a7d87448a1f8406a6a97fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 10
   CurrentHealth: 0
-  Atk: 2
+  MaxHealth: 5
   IsAlive: 1
   isAlly: 0
+  Atk: 1
   attack: {fileID: 8300000, guid: c63670661a27b1d4588ffb407c9fa0ac, type: 3}
   speed: 100
   thumbnail: {fileID: 21300000, guid: bca858008a7b4e04a82de2284c224d30, type: 3}

@@ -26,6 +26,7 @@ namespace TurnBasedPackage
         public List<EventNotifier> OnReadyEvents;
         public GameObject arrow;
         public GameObject target;
+        private string ppreviousSceneName;
 
         // Use this for initialization
         void Start()
@@ -56,9 +57,20 @@ namespace TurnBasedPackage
             charactersPool.InitMap();
 
             //Building allies and enemies from the characters pool.
+            Dictionary<string, object> previousContext = TransitionWithParameters.parameters;
+            object pEnemies = "NA";
+            previousContext.TryGetValue("enemies", out pEnemies);
+            object ppreviousSceneNameO;
+            previousContext.TryGetValue("previousSceneName", out ppreviousSceneNameO);
+            ppreviousSceneName = (string)ppreviousSceneNameO;
+            
+            //context.Add("previousScene", SceneManager.GetActiveScene().name); //This context must be string to obj maybe?
+            //context.Add("enemies", new string[]{"cat", "cat", "cat"}); //This context must be string to obj maybe?
+
+            Debug.Log("previousScene: " + ppreviousSceneName);
             PrepareAllies();
 
-            PrepareEnemies();
+            PrepareEnemies((string[])pEnemies);
 
             PrepareBattle();
 
@@ -93,9 +105,9 @@ namespace TurnBasedPackage
             string[] enemies = new string[] { "blue", "frosty", "blue" };
             PrepareCharacters(parent, Allies, enemies);
         }
-        private void PrepareEnemies(){
+        private void PrepareEnemies(string[] enemies){
             Transform parent = GameObject.Find("enemies").transform;
-            string[] enemies = new string[] { "cat", "red", "cat" };
+            //string[] enemies = new string[] { "cat", "red", "cat" };
             PrepareCharacters(parent, Enemies, enemies);
         }
         /* 
@@ -279,6 +291,8 @@ namespace TurnBasedPackage
                 //All defeated
                 Debug.Log( isAlly ? "DEFEAT!" : "VICTORY");
                 this.gameObject.SetActive(false); //TODO: This hack removes the infinite loop, fix this.
+
+                TransitionWithParameters.Transition(ppreviousSceneName, null);
                 return;
             }
             //Reset target for either side.
