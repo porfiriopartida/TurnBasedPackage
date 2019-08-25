@@ -118,7 +118,13 @@ namespace TurnBasedPackage
         }
         private void PrepareEnemies(string[] enemies){
             Transform parent = GameObject.Find("enemies").transform;
-            //string[] enemies = new string[] { "cat", "red", "cat" };
+
+            //What if enemies is null/empty? should we go back to the previous screen if any?
+            //What if I want to debug only the battle scene?
+            if(enemies == null || enemies.Length == 0){
+                enemies = new string[] { "cat", "red", "cat" };
+            }
+            
             PrepareCharacters(parent, Enemies, enemies);
         }
         /* 
