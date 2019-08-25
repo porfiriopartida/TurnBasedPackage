@@ -19,10 +19,15 @@ public class TargetLookup : MonoBehaviour
         this.target = target;
         this.transform.parent = target.transform;
 
-        float x = target.transform.position.x + offsetX;
-        float y = target.transform.position.y + offsetY;
-        float z = target.transform.position.z;
+        Transform arrowPositionObject = target.transform.Find("ArrowPosition");
+        if(arrowPositionObject != null){
+            this.transform.position = arrowPositionObject.position;
+        } else {
+            float x = target.transform.position.x + offsetX;
+            float y = target.transform.position.y + offsetY;
+            float z = target.transform.position.z;
+            this.transform.position = new Vector3(x, y, z);
+        }
 
-        this.transform.position = new Vector3(x, y, z);
     }
 }

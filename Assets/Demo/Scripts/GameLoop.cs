@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 namespace TurnBasedPackage
 {
     public class GameLoop : MonoBehaviour
@@ -61,8 +62,12 @@ namespace TurnBasedPackage
             object pEnemies = "NA";
             previousContext.TryGetValue("enemies", out pEnemies);
             object ppreviousSceneNameO;
-            previousContext.TryGetValue("previousSceneName", out ppreviousSceneNameO);
-            ppreviousSceneName = (string)ppreviousSceneNameO;
+            
+            if(previousContext.TryGetValue("previousSceneName", out ppreviousSceneNameO)){
+                ppreviousSceneName = (string)ppreviousSceneNameO;
+            } else {
+                ppreviousSceneName = SceneManager.GetActiveScene().name;
+            }
             
             //context.Add("previousScene", SceneManager.GetActiveScene().name); //This context must be string to obj maybe?
             //context.Add("enemies", new string[]{"cat", "cat", "cat"}); //This context must be string to obj maybe?
@@ -159,7 +164,11 @@ namespace TurnBasedPackage
                 //Setup hp and energy bars.
                 newInstance.transform.Find("STATUS_BAR");
                 GameObject newUIInstance = Instantiate(_characterUIBarPrefab, newInstance.transform);
+                Transform statusBarPosition =  newInstance.transform.Find("StatusBarPosition");
                 newUIInstance.name = Character.STATUS_BAR_NAME;
+                if(statusBarPosition != null){
+                    newUIInstance.transform.position = statusBarPosition.transform.position;
+                }
                 newCharacter.HierarchyUpdated();
             }
         }
